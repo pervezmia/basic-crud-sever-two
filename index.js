@@ -69,6 +69,9 @@ async function run() {
 
       // console.log(query);
 
+
+      
+
       const result = await productCollection.findOne(query);
       // console.log(result);
       res.send(result)
