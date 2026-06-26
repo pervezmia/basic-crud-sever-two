@@ -1,7 +1,11 @@
 const express = require('express');
+const cors = require('cors');
 require('dotenv').config();
 const app = express();
-const port = 7000;
+
+app.use(cors())
+
+const port = process.env.PORT || 7000;
 
 
 const items = [
@@ -63,10 +67,10 @@ async function run() {
       console.log(productId);
       const query = {_id: new ObjectId(productId)}
 
-      console.log(query);
+      // console.log(query);
 
       const result = await productCollection.findOne(query);
-      console.log(result);
+      // console.log(result);
       res.send(result)
       
     })
