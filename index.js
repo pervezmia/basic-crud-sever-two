@@ -3,9 +3,10 @@ const cors = require('cors');
 require('dotenv').config();
 const app = express();
 
-app.use(cors())
 
 const port = process.env.PORT || 7000;
+app.use(cors());
+app.use(express.json())
 
 
 const items = [
@@ -58,7 +59,7 @@ async function run() {
       // console.log(result);
       // console.log(cursor);
       res.send(result);
-    })
+    });
     
     app.get("/products/:productId", async (req, res) => {
       // const params
@@ -69,13 +70,53 @@ async function run() {
 
       // console.log(query);
 
-
-      
-
       const result = await productCollection.findOne(query);
       // console.log(result);
       res.send(result)
       
+    });
+
+    app.post("/products", async (req, res) => {
+      //add product 
+      console.log(req.body, "from body");
+      const newProduct = req.body;
+
+      const result = await productCollection.insertOne(newProduct);
+
+      console.log(result);
+      
+      res.send(result);
+
+
+    });
+
+    app.delete("/products/:productId", async (req, res) => {
+      const productId = req.params.productId;
+      console.log(productId);
+      const query = {_id: new ObjectId(productId)}
+      const result = await productCollection.deleteOne(query);
+      console.log(result);
+      res.send(result);
+    });
+
+    app.patch("/products/:productId", async(req, res) => {
+      const productId = req.params.productId;
+      const updatedData = req.body;
+      // console.log({productId, updatedData});
+
+      const filter = {_id: new ObjectId(productId)}
+      console.log(filter);
+      const updatedDoc = {
+        $set: {
+          ...updatedData
+        }
+      }
+      const result = await productCollection.updateOne(filter, updatedDoc);
+      console.log(result);
+      res.send(result);
+      // const result = await productCollection.updateOne(query);
+      // console.log(result);
+      // res.send(result); 
     })
 
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
